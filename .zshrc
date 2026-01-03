@@ -35,9 +35,10 @@ zstyle ':fzf-tab:complete:z:*' fzf-preview 'ls --color $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
 # zoxide (smarter cd)
-eval "$(zoxide init zsh)"
-
-alias cd='z'
+if command -v zoxide &> /dev/null; then
+  eval "$(zoxide init zsh)"
+  alias cd='z'
+fi
 # Git aliases
 alias g='git'
 alias gst='git status'
