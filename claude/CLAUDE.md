@@ -1,25 +1,14 @@
-# CLAUDE.md
-
-Personal preferences for Claude Code across all projects.
-
 ## Code Style
-- Prefer concise, readable code over clever solutions
-- Use descriptive variable names
-- Keep functions small and focused
+- Refer to ~/.claude/CLEAN_CODE.md
 
 ## Workflow
 - Run tests before committing
 - Write meaningful commit messages
 - Prefer editing existing files over creating new ones
 
-## Communication
-- Be direct and concise
-- Skip obvious explanations
-- Focus on implementation, not theory
-
 ## Git
-- Branch naming: feature/*, hotfix/*, /bugfix/*, chore/*, etc.
-- Flag commit messages based on the context of the change ([Feature], [Bugfix], [Chore], [Docs], etc.)
+- Branch naming: feature/*, hotfix/*, bugfix/*, chore/*, etc.
+- Flag commit messages based on context: `[Feature] Add user auth`, `[Bugfix] Fix null check`, `[Chore] Update deps`, `[Docs] Update README`
 - Keep commits atomic and focused
 
 ## Error Handling
@@ -27,11 +16,24 @@ Personal preferences for Claude Code across all projects.
 - Use descriptive error messages
 - Handle errors at appropriate boundaries
 
-## Documentation
-- Only add comments for non-obvious logic
-- Keep README files up to date
-- Prefer self-documenting code over excessive comments
+## Security
+- Never commit secrets, API keys, or credentials
+- Validate user inputs at boundaries
+- Follow OWASP guidelines for web applications
 
-## Project Documentation
-- For new projects, always initialize a DOCS.md file at the root directory
-- After making any changes, update CLAUDE.md with relevant context about those changes (architecture decisions, new patterns, important files, etc.)
+## Dependencies
+- Minimize new dependencies
+- Prefer well-maintained, widely-used packages
+- Check for security vulnerabilities before adding
+
+## Documentation
+- Keep README files up to date
+- Only add comments for non-obvious logic
+- Prefer self-documenting code over excessive comments
+- For new projects, initialize a DOCS.md file at the root directory
+- Update DOCS.md after architectural changes or new patterns
+
+## Before Completing Tasks
+- Verify changes don't break existing functionality
+- Check for console.logs or debug statements
+- Ensure no TODO comments are left unresolved

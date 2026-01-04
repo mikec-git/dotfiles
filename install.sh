@@ -46,24 +46,28 @@ done
 
 # Claude Code config
 CLAUDE_DIR="$HOME/.claude"
-CLAUDE_SOURCE="$DOTFILES_DIR/claude/CLAUDE.md"
-CLAUDE_TARGET="$CLAUDE_DIR/CLAUDE.md"
+CLAUDE_FILES=("CLAUDE.md" "CLEAN_CODE.md")
 
-if [ -f "$CLAUDE_SOURCE" ]; then
-    mkdir -p "$CLAUDE_DIR"
+mkdir -p "$CLAUDE_DIR"
 
-    if [ -L "$CLAUDE_TARGET" ]; then
-        echo "Removing existing symlink: $CLAUDE_TARGET"
-        rm "$CLAUDE_TARGET"
-    elif [ -f "$CLAUDE_TARGET" ]; then
-        echo "Backing up: $CLAUDE_TARGET"
-        mkdir -p "$BACKUP_DIR"
-        mv "$CLAUDE_TARGET" "$BACKUP_DIR/"
+for file in "${CLAUDE_FILES[@]}"; do
+    source="$DOTFILES_DIR/claude/$file"
+    target="$CLAUDE_DIR/$file"
+
+    if [ -f "$source" ]; then
+        if [ -L "$target" ]; then
+            echo "Removing existing symlink: $target"
+            rm "$target"
+        elif [ -f "$target" ]; then
+            echo "Backing up: $target"
+            mkdir -p "$BACKUP_DIR"
+            mv "$target" "$BACKUP_DIR/"
+        fi
+
+        echo "Creating symlink: $target -> $source"
+        ln -s "$source" "$target"
     fi
-
-    echo "Creating symlink: $CLAUDE_TARGET -> $CLAUDE_SOURCE"
-    ln -s "$CLAUDE_SOURCE" "$CLAUDE_TARGET"
-fi
+done
 
 echo ""
 echo "Installation complete!"
