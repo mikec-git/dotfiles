@@ -1,0 +1,29 @@
+{
+  "favoriteModelIDs" : [
+    "sw-gpt-5.1",
+    "sw-gpt-5-mini",
+    "sw-ultra-cloud-v1-east"
+  ],
+  "modeKeys" : [
+    "super",
+    "custom-VXHH",
+    "custom",
+    "custom-VUAG",
+    "voice to text"
+  ],
+  "replacements" : [
+    {
+      "id" : "9C57C7C8-7B9D-42AD-BEC4-DA5E17748119",
+      "original" : "super whisper",
+      "with" : "Superwhisper"
+    }
+  ],
+  "vocabulary" : [
+    "Superwhisper",
+    "claude",
+    "claude.md",
+    "claude code",
+    "mike choi",
+    "choi"
+  ]
+}
