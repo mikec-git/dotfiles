@@ -20,6 +20,10 @@ zinit wait lucid depth=1 for \
   zsh-users/zsh-syntax-highlighting \
   zsh-users/zsh-completions
 
+# Initialize completion system
+autoload -Uz compinit
+compinit
+
 # fzf-tab (must load after compinit, before other plugins that wrap widgets)
 zinit light Aloxaf/fzf-tab
 
@@ -28,6 +32,7 @@ eval "$(fzf --zsh)"
 
 # Completion styling
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' insert-tab false
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
