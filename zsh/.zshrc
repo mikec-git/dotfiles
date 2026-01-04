@@ -32,7 +32,17 @@ eval "$(fzf --zsh)"
 
 # Completion styling
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
-zstyle ':completion:*' insert-tab false
+# Custom tab: show files on empty prompt, otherwise normal completion
+function complete-files-or-expand() {
+  if [[ -z "$BUFFER" ]]; then
+    BUFFER="./"
+    CURSOR=2
+  fi
+  zle fzf-tab-complete
+}
+zle -N complete-files-or-expand
+bindkey "^I" complete-files-or-expand
+
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
