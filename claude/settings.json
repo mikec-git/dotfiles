@@ -36,7 +36,8 @@
       "Bash(gh pr view:*)",
       "Bash(gh issue list:*)",
       "Bash(gh issue view:*)",
-      "Bash(claude init)"
+      "Bash(claude init)",
+      "Bash(file:*)"
     ],
     "deny": [
       "Read(./.env*)",
