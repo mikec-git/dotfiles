@@ -42,6 +42,52 @@ if ! command -v jq &> /dev/null; then
     exit 1
 fi
 
+# Check if Superwhisper is running (need to quit to modify settings)
+RESTART_SUPERWHISPER=false
+if pgrep -q -i superwhisper; then
+    echo "Superwhisper is running."
+    read -p "Quit Superwhisper to proceed? [Y/n]: " quit_sw
+    if [[ "$quit_sw" =~ ^[Nn]$ ]]; then
+        echo "Cannot modify settings while Superwhisper is running. Exiting."
+        exit 1
+    fi
+    echo "Quitting Superwhisper..."
+    osascript -e 'quit app "Superwhisper"'
+    RESTART_SUPERWHISPER=true
+
+    # Wait for Superwhisper to fully exit (up to 10 seconds)
+    echo -n "Waiting for Superwhisper to exit"
+    for i in {1..20}; do
+        if ! pgrep -q -i superwhisper; then
+            echo " done."
+            break
+        fi
+        echo -n "."
+        sleep 0.5
+    done
+
+    # If still running after graceful quit, force kill
+    if pgrep -q -i superwhisper; then
+        echo ""
+        echo "Superwhisper didn't quit gracefully, force killing..."
+        killall -9 Superwhisper 2>/dev/null || true
+        sleep 1
+    fi
+
+    # Extra delay to ensure file handles are released
+    sleep 2
+
+    # If STILL running, warn user
+    if pgrep -q -i superwhisper; then
+        echo ""
+        echo "Warning: Superwhisper is still running. You may need to force quit it."
+        read -p "Continue anyway? [y/N]: " cont
+        if [[ ! "$cont" =~ ^[Yy]$ ]]; then
+            exit 1
+        fi
+    fi
+fi
+
 echo "Installing Superwhisper settings..."
 
 # Create target directory if it doesn't exist
@@ -68,6 +114,12 @@ if [ ! -f "$TARGET_SETTINGS" ] || [ -L "$TARGET_SETTINGS" ]; then
 
     echo ""
     echo "Done! Settings symlinked to $REPO_SETTINGS"
+
+    # Restart Superwhisper if we quit it
+    if [ "$RESTART_SUPERWHISPER" = true ]; then
+        echo "Restarting Superwhisper..."
+        open -a "Superwhisper"
+    fi
     exit 0
 fi
 
@@ -81,10 +133,45 @@ fi
 echo "Found existing Superwhisper settings."
 echo ""
 
+# Robust file copy that handles "Interrupted system call" errors
+# Uses cat+redirect as fallback (different syscalls than cp)
+# Args: $1 = source path, $2 = destination path
+retry_cp() {
+    local src="$1"
+    local dst="$2"
+    local max_attempts=5
+    local attempt=1
+
+    # Try cp first with retries
+    while [ $attempt -le $max_attempts ]; do
+        if cp "$src" "$dst" 2>/dev/null; then
+            return 0
+        fi
+        echo "  Retry $attempt/$max_attempts: waiting for file to be released..."
+        sleep 1
+        ((attempt++))
+    done
+
+    # Fallback: use cat+redirect (different syscalls, often works around EINTR)
+    echo "  Trying alternative copy method..."
+    if cat "$src" > "$dst" 2>/dev/null; then
+        return 0
+    fi
+
+    # Final fallback: use ditto (Apple's copy tool, handles special attrs)
+    echo "  Trying ditto..."
+    if ditto "$src" "$dst" 2>/dev/null; then
+        return 0
+    fi
+
+    # Last resort with error output
+    cp "$src" "$dst"
+}
+
 # Always backup existing settings before modifying anything
 echo "Creating backup at $BACKUP_DIR"
 mkdir -p "$BACKUP_DIR"
-cp "$TARGET_SETTINGS" "$BACKUP_DIR/settings.json"
+retry_cp "$TARGET_SETTINGS" "$BACKUP_DIR/settings.json"
 
 # ============================================================================
 # Helper Functions
@@ -112,12 +199,12 @@ get_replacement_items() {
 # Returns: user's choice letter (defaults to 'A' if empty)
 prompt_merge_choice() {
     local section="$1"
-    echo ""
-    echo "How to merge $section?"
-    echo "  [A] All from both (union)"
-    echo "  [R] Repo only"
-    echo "  [E] Existing only"
-    echo "  [S] Select items individually"
+    echo "" >&2
+    echo "How to merge $section?" >&2
+    echo "  [A] All from both (union)" >&2
+    echo "  [R] Repo only" >&2
+    echo "  [E] Existing only" >&2
+    echo "  [S] Select items individually" >&2
     read -p "Choice [A/R/E/S]: " choice
     echo "${choice:-A}"
 }
@@ -155,7 +242,7 @@ select_items() {
 merge_simple_array() {
     local key="$1"
 
-    echo "=== $key ==="
+    echo "=== $key ===" >&2
 
     # Get items from both files
     local repo_items=$(get_array_items "$REPO_SETTINGS" "$key")
@@ -171,26 +258,26 @@ merge_simple_array() {
 
     # If no differences, skip the prompt
     if [ -z "$only_in_repo" ] && [ -z "$only_in_existing" ]; then
-        echo "  No differences found."
+        echo "  No differences found." >&2
         echo "$existing_items"
         return
     fi
 
     # Show what's different to help user decide
     if [ -n "$only_in_repo" ]; then
-        echo "  Items in repo not in existing:"
-        echo "$only_in_repo" | sed 's/^/    - /'
+        echo "  Items in repo not in existing:" >&2
+        echo "$only_in_repo" | sed 's/^/    - /' >&2
     fi
 
     if [ -n "$only_in_existing" ]; then
-        echo "  Items in existing not in repo:"
-        echo "$only_in_existing" | sed 's/^/    - /'
+        echo "  Items in existing not in repo:" >&2
+        echo "$only_in_existing" | sed 's/^/    - /' >&2
     fi
 
     local choice=$(prompt_merge_choice "$key")
 
     # ${choice^^} converts to uppercase for case-insensitive matching
-    case "${choice^^}" in
+    case "$(echo "$choice" | tr '[:lower:]' '[:upper:]')" in
         A)
             # Union: combine both and deduplicate
             { echo "$repo_items"; echo "$existing_items"; } | sort -u | grep -v '^$'
@@ -218,7 +305,7 @@ merge_simple_array() {
 # Args: none (uses global REPO_SETTINGS and TARGET_SETTINGS)
 # Returns: merged JSON array
 merge_replacements() {
-    echo "=== replacements ==="
+    echo "=== replacements ===" >&2
 
     # Compare by the "original" field (the key that identifies each replacement)
     local repo_originals=$(get_replacement_items "$REPO_SETTINGS")
@@ -229,31 +316,31 @@ merge_replacements() {
 
     # If no differences, skip the prompt
     if [ -z "$only_in_repo" ] && [ -z "$only_in_existing" ]; then
-        echo "  No differences found."
+        echo "  No differences found." >&2
         jq '.replacements // []' "$TARGET_SETTINGS"
         return
     fi
 
     # Show replacement rules that differ (display as 'original' -> 'replacement')
     if [ -n "$only_in_repo" ]; then
-        echo "  Replacements in repo not in existing:"
+        echo "  Replacements in repo not in existing:" >&2
         echo "$only_in_repo" | while read -r orig; do
             local with=$(jq -r --arg orig "$orig" '.replacements[] | select(.original == $orig) | .with' "$REPO_SETTINGS")
-            echo "    - '$orig' -> '$with'"
+            echo "    - '$orig' -> '$with'" >&2
         done
     fi
 
     if [ -n "$only_in_existing" ]; then
-        echo "  Replacements in existing not in repo:"
+        echo "  Replacements in existing not in repo:" >&2
         echo "$only_in_existing" | while read -r orig; do
             local with=$(jq -r --arg orig "$orig" '.replacements[] | select(.original == $orig) | .with' "$TARGET_SETTINGS")
-            echo "    - '$orig' -> '$with'"
+            echo "    - '$orig' -> '$with'" >&2
         done
     fi
 
     local choice=$(prompt_merge_choice "replacements")
 
-    case "${choice^^}" in
+    case "$(echo "$choice" | tr '[:lower:]' '[:upper:]')" in
         A)
             # Merge both arrays, deduplicate by "original" field (existing wins on conflicts)
             jq -s '.[0].replacements + .[1].replacements | unique_by(.original)' "$TARGET_SETTINGS" "$REPO_SETTINGS"
@@ -266,7 +353,7 @@ merge_replacements() {
             ;;
         S)
             # Individual selection not implemented for objects - fall back to union
-            echo "  (For replacements, selecting 'All from both' - individual selection not supported for objects)"
+            echo "  (For replacements, selecting 'All from both' - individual selection not supported for objects)" >&2
             jq -s '.[0].replacements + .[1].replacements | unique_by(.original)' "$TARGET_SETTINGS" "$REPO_SETTINGS"
             ;;
         *)
@@ -340,3 +427,9 @@ echo ""
 echo "Installation complete!"
 echo "Backup saved to: $BACKUP_DIR/settings.json"
 echo "Settings merged and symlinked to: $REPO_SETTINGS"
+
+# Restart Superwhisper if we quit it
+if [ "$RESTART_SUPERWHISPER" = true ]; then
+    echo "Restarting Superwhisper..."
+    open -a "Superwhisper"
+fi

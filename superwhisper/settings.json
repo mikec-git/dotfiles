@@ -1,14 +1,14 @@
 {
   "favoriteModelIDs" : [
-    "sw-gpt-5.1",
     "sw-gpt-5-mini",
+    "sw-gpt-5.1",
     "sw-ultra-cloud-v1-east"
   ],
   "modeKeys" : [
-    "super",
-    "custom-VXHH",
     "custom",
     "custom-VUAG",
+    "custom-VXHH",
+    "super",
     "voice to text"
   ],
   "replacements" : [
@@ -19,11 +19,14 @@
     }
   ],
   "vocabulary" : [
-    "Superwhisper",
+    "choi",
     "claude",
-    "claude.md",
     "claude code",
+    "claude.md",
     "mike choi",
-    "choi"
+    "Superwhisper",
+    "wezterm",
+    "dotfile",
+    "dotfiles"
   ]
 }
