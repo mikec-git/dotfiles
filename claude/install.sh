@@ -10,7 +10,7 @@ BACKUP_DIR="$HOME/.dotfiles-backup/$(date +%Y%m%d_%H%M%S)"
 
 # Claude config directory
 CLAUDE_DIR="$HOME/.claude"
-CLAUDE_FILES=("CLAUDE.md" "CLEAN_CODE.md")
+CLAUDE_FILES=("CLAUDE.md" "CLEAN_CODE.md" "settings.json")
 
 echo "Installing Claude Code configuration..."
 
