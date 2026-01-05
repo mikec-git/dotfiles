@@ -4,6 +4,9 @@
 ## Initialization
 - Run `/init` for initializing CLAUDE.md in the local repository, allow claude to automatically create it
 
+## Environment
+- Always use Unix-style line endings (LF), never Windows-style (CRLF)
+
 ## Writing Style
 - Use regular hyphens (-) instead of em dashes (—) or en dashes (–)
 
