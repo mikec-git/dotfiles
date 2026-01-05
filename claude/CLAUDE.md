@@ -1,6 +1,9 @@
 ## Code Style
 - Refer to ~/.claude/CLEAN_CODE.md
 
+## Writing Style
+- Use regular hyphens (-) instead of em dashes (—) or en dashes (–)
+
 ## Workflow
 - Run tests before committing
 - Write meaningful commit messages
