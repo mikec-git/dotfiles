@@ -1,6 +1,9 @@
 ## Code Style
 - Refer to ~/.claude/CLEAN_CODE.md
 
+## Initialization
+- Run `/init` for initializing CLAUDE.md in the local repository, allow claude to automatically create it
+
 ## Writing Style
 - Use regular hyphens (-) instead of em dashes (—) or en dashes (–)
 
