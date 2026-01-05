@@ -1,0 +1,9 @@
+name: voice-to-text
+
+customInstructions: |
+
+examples:
+  - spokenInput: |
+
+    aiOutput: |
+
