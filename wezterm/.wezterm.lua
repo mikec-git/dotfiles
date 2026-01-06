@@ -12,6 +12,10 @@ config.keys = {
   {key="LeftArrow", mods="CMD", action=wezterm.action{SendString="\x01"}},
   -- Command+Right: Go to end of line
   {key="RightArrow", mods="CMD", action=wezterm.action{SendString="\x05"}},
+  -- Command+Delete: Delete from cursor to beginning of line
+  {key="Backspace", mods="CMD", action=wezterm.action{SendString="\x15"}},
+  -- Option+Delete: Delete word backward
+  {key="Backspace", mods="ALT", action=wezterm.action{SendString="\x17"}},
 }
 
 return config

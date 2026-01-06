@@ -45,6 +45,9 @@ function complete-files-or-expand() {
 zle -N complete-files-or-expand
 bindkey "^I" complete-files-or-expand
 
+# macOS-style delete behavior (Cmd+Delete sends ^U)
+bindkey "^U" backward-kill-line
+
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
@@ -75,6 +78,10 @@ alias grb='git rebase'
 # Aliases
 alias python='python3'
 alias reload='source ~/.zshrc'
+
+# Claude Code sandbox
+alias sandbox='docker exec -it $(docker ps -qf "name=claude-sandbox") zsh'
+alias cc='claude'
 
 # NVM
 export NVM_DIR="$HOME/.nvm"
