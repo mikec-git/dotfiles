@@ -7,8 +7,11 @@
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null)
 
 if [ -z "$STAGED_FILES" ]; then
+    echo "[hook] scan-secrets: no staged files, skipping"
     exit 0
 fi
+
+echo "[hook] scan-secrets: scanning staged files for secrets..."
 
 # Patterns to detect sensitive data
 PATTERNS=(
@@ -75,4 +78,5 @@ if [ $FOUND_SECRETS -eq 1 ]; then
     exit 2
 fi
 
+echo "[hook] scan-secrets: no secrets detected, proceeding"
 exit 0
