@@ -16,6 +16,16 @@
       "id" : "9C57C7C8-7B9D-42AD-BEC4-DA5E17748119",
       "original" : "super whisper",
       "with" : "Superwhisper"
+    },
+    {
+      "id" : "DED5844C-7009-45E5-A6F9-4B8A70C2E305",
+      "original" : ".file",
+      "with" : "dotfile"
+    },
+    {
+      "id" : "202A2973-363A-4DE1-B3F8-03A586C951AB",
+      "original" : ".files",
+      "with" : "dotfiles"
     }
   ],
   "vocabulary" : [
