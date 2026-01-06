@@ -39,12 +39,8 @@
       "Bash(claude init)",
       "Bash(file:*)"
     ],
-    "deny": [
-      "Read(./.env*)",
-      "Bash(rm -rf :*)",
-      "Bash(npm publish)"
-    ],
-    "defaultMode": "plan"
+    "deny": ["Read(./.env*)", "Bash(rm -rf :*)", "Bash(npm publish)"],
+    "defaultMode": "ask"
   },
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
