@@ -78,6 +78,8 @@ alias grb='git rebase'
 # Aliases
 alias python='python3'
 alias reload='source ~/.zshrc'
+alias cl='clear'
+alias tm='tmux'
 
 # Claude Code sandbox
 alias sandbox='docker exec -it $(docker ps -qf "name=claude-sandbox") zsh'
