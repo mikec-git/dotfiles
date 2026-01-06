@@ -39,10 +39,10 @@
       "Bash(claude init)",
       "Bash(file:*)",
       "Skill(skill-creator:*)",
-      "Skill(smart-commit:*)",
       "Skill(blog-writer:*)",
       "Skill(frontend-design\\:frontend-design:*)",
-      "Skill(prompt-improver\\:prompt-improver:*)"
+      "Skill(prompt-improver\\:prompt-improver:*)",
+      "Skill(commit:*)"
     ],
     "deny": ["Read(./.env*)", "Bash(rm -rf :*)", "Bash(npm publish)"],
     "defaultMode": "plan"
