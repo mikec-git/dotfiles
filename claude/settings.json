@@ -40,7 +40,7 @@
       "Bash(file:*)"
     ],
     "deny": ["Read(./.env*)", "Bash(rm -rf :*)", "Bash(npm publish)"],
-    "defaultMode": "ask"
+    "defaultMode": "plan"
   },
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
