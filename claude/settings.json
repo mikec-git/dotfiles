@@ -79,6 +79,16 @@
             "timeout": 5
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.command' | grep -qE '^git (commit|add)' && ~/.claude/hooks/scan-secrets.sh || exit 0",
+            "timeout": 30
+          }
+        ]
       }
     ],
     "Notification": [
@@ -87,7 +97,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"Claude is waiting for your input\" with title \"Claude Code\"'",
+            "command": "terminal-notifier -title 'Claude Code' -message 'Claude is waiting for your input' -sound Glass",
             "timeout": 5
           }
         ]
@@ -97,7 +107,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"Permission required\" with title \"Claude Code\"'",
+            "command": "terminal-notifier -title 'Claude Code' -message 'Permission required' -sound Glass",
             "timeout": 5
           }
         ]

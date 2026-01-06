@@ -35,4 +35,22 @@ for file in "${CLAUDE_FILES[@]}"; do
     fi
 done
 
+# Symlink hooks directory
+HOOKS_SOURCE="$SCRIPT_DIR/hooks"
+HOOKS_TARGET="$CLAUDE_DIR/hooks"
+
+if [ -d "$HOOKS_SOURCE" ]; then
+    if [ -L "$HOOKS_TARGET" ]; then
+        echo "Removing existing symlink: $HOOKS_TARGET"
+        rm "$HOOKS_TARGET"
+    elif [ -d "$HOOKS_TARGET" ]; then
+        echo "Backing up: $HOOKS_TARGET"
+        mkdir -p "$BACKUP_DIR"
+        mv "$HOOKS_TARGET" "$BACKUP_DIR/"
+    fi
+
+    echo "Creating symlink: $HOOKS_TARGET -> $HOOKS_SOURCE"
+    ln -s "$HOOKS_SOURCE" "$HOOKS_TARGET"
+fi
+
 echo "Claude Code configuration installed!"
