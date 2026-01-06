@@ -50,5 +50,58 @@
     "frontend-design@claude-plugins-official": true,
     "prompt-improver@severity1-marketplace": true,
     "rust-analyzer-lsp@claude-plugins-official": true
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | { read file_path; if echo \"$file_path\" | grep -qE '\\.(ts|tsx|js|jsx|json|yaml|yml|md|css|scss)$'; then npx prettier --write --ignore-unknown \"$file_path\" 2>/dev/null; fi; }",
+            "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | { read file_path; if echo \"$file_path\" | grep -qE '\\.(ts|tsx|js|jsx)$'; then npx eslint --fix --no-warn-ignored \"$file_path\" 2>/dev/null || true; fi; }",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -e '.tool_input.file_path | test(\"(\\.env|\\.git/|lock\\.yaml|package-lock\\.json|credentials)\")' /dev/stdin >/dev/null 2>&1 && { echo 'Protected: Cannot edit sensitive files (.env, lock files, .git, credentials)' >&2; exit 2; } || exit 0",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "idle_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claude is waiting for your input\" with title \"Claude Code\"'",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "permission_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Permission required\" with title \"Claude Code\"'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
   }
 }

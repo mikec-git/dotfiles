@@ -10,6 +10,9 @@
 ## Writing Style
 - Use regular hyphens (-) instead of em dashes (—) or en dashes (–)
 
+## Clarification
+- If unsure, use the askuserquestiontool to ask as many follow ups as you need to reach clarity
+
 ## Workflow
 - Run tests before committing
 - Write meaningful commit messages
