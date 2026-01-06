@@ -18,4 +18,8 @@ echo ""
 "$DOTFILES_DIR/claude/install.sh"
 echo ""
 
+# Install WezTerm configuration
+"$DOTFILES_DIR/wezterm/install.sh"
+echo ""
+
 echo "All configurations installed!"
