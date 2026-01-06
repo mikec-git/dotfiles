@@ -59,12 +59,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path' | { read file_path; if echo \"$file_path\" | grep -qE '\\.(ts|tsx|js|jsx|json|yaml|yml|md|css|scss)$'; then echo \"[hook] prettier: formatting $file_path\"; npx prettier --write --ignore-unknown \"$file_path\" 2>/dev/null && echo \"[hook] prettier: done\"; fi; }",
+            "command": "~/.claude/hooks/format-prettier.py",
             "timeout": 30
           },
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path' | { read file_path; if echo \"$file_path\" | grep -qE '\\.(ts|tsx|js|jsx)$'; then echo \"[hook] eslint: fixing $file_path\"; npx eslint --fix --no-warn-ignored \"$file_path\" 2>/dev/null || true; echo \"[hook] eslint: done\"; fi; }",
+            "command": "~/.claude/hooks/fix-eslint.py",
             "timeout": 30
           }
         ]
@@ -76,7 +76,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "tee /tmp/claude-hook-input | jq -e '.tool_input.file_path | test(\"(\\.env|\\.git/|lock\\.yaml|package-lock\\.json|credentials)\")' >/dev/null 2>&1 && { echo '[hook] protected-files: BLOCKED - cannot edit sensitive files' >&2; exit 2; } || { echo \"[hook] protected-files: allowed $(cat /tmp/claude-hook-input | jq -r '.tool_input.file_path')\"; exit 0; }",
+            "command": "~/.claude/hooks/protect-sensitive-files.py",
             "timeout": 5
           }
         ]
@@ -86,7 +86,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.command' | grep -qE '^git (commit|add)' && ~/.claude/hooks/scan-secrets.sh || exit 0",
+            "command": "~/.claude/hooks/scan-secrets-on-commit.py",
             "timeout": 30
           }
         ]
