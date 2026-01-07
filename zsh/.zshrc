@@ -86,6 +86,7 @@ alias tm='tmux'
 
 # Claude Code sandbox
 alias sandbox='docker exec -it $(docker ps -qf "label=devcontainer.local_folder=/Users/mchoi/claude-sandbox") zsh'
+alias sb='sandbox'
 alias cc='claude'
 if [[ "$CLAUDE_CODE_SANDBOX" == "true" ]]; then
   alias claude='claude --dangerously-skip-permissions'
