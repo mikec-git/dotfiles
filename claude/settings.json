@@ -1,4 +1,9 @@
 {
+  "statusLine": {
+    "type": "command",
+    "command": "~/.tmux/scripts/claude-statusline.sh",
+    "padding": 0
+  },
   "permissions": {
     "allow": [
       "Read",
