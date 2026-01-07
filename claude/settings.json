@@ -14,6 +14,7 @@
       "Bash(git stash:*)",
       "Bash(git show:*)",
       "Bash(git blame:*)",
+      "Bash(git fetch:*)",
       "Bash(cd:*)",
       "Bash(ls:*)",
       "Bash(pwd:*)",
