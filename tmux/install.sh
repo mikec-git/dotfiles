@@ -44,4 +44,22 @@ for file in "${FILES[@]}"; do
     ln -s "$source" "$target"
 done
 
+# Install scripts directory
+SCRIPTS_SOURCE="$SCRIPT_DIR/.tmux/scripts"
+SCRIPTS_TARGET="$HOME/.tmux/scripts"
+
+if [ -d "$SCRIPTS_SOURCE" ]; then
+    echo "Installing tmux scripts..."
+    mkdir -p "$HOME/.tmux"
+
+    if [ -L "$SCRIPTS_TARGET" ]; then
+        rm "$SCRIPTS_TARGET"
+    elif [ -d "$SCRIPTS_TARGET" ]; then
+        rm -rf "$SCRIPTS_TARGET"
+    fi
+
+    ln -s "$SCRIPTS_SOURCE" "$SCRIPTS_TARGET"
+    echo "Scripts installed: $SCRIPTS_TARGET -> $SCRIPTS_SOURCE"
+fi
+
 echo "Tmux configuration installed!"
