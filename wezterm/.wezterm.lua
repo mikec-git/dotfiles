@@ -18,4 +18,13 @@ config.keys = {
   {key="Backspace", mods="ALT", action=wezterm.action{SendString="\x17"}},
 }
 
+config.mouse_bindings = {
+  -- Command-click opens hyperlinks
+  {
+    event = { Up = { streak = 1, button = 'Left' } },
+    mods = 'CMD',
+    action = wezterm.action.OpenLinkAtMouseCursor,
+  },
+}
+
 return config
