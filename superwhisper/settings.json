@@ -26,6 +26,11 @@
       "id" : "202A2973-363A-4DE1-B3F8-03A586C951AB",
       "original" : ".files",
       "with" : "dotfiles"
+    },
+    {
+      "id" : "33D06755-EB60-4E11-A08C-EF44457E7EC2",
+      "original" : "front matter",
+      "with" : "frontmatter"
     }
   ],
   "vocabulary" : [
